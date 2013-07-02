@@ -1,0 +1,22 @@
+PATH
+  remote: .
+  specs:
+    concerning (1.0.0)
+      activesupport (>= 3.0.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (3.2.11)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    i18n (0.6.1)
+    minitest (4.5.0)
+    multi_json (1.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  concerning!
+  minitest

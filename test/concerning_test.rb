@@ -36,4 +36,24 @@ class ConcerningTest < MiniTest::Unit::TestCase
     klass = Class.new { concerning(:Foo) { } }
     assert klass.ancestors.include?(klass::Foo), klass.ancestors.inspect
   end
+
+  class Foo
+    concerning :Bar do
+      module ClassMethods
+        def should_not_be_public; end
+      end
+      class_methods do
+        def should_be_public; end
+      end
+    end
+  end
+
+  def test_concerning_does_not_add_a_class_method_if_module_defined_directly
+    assert !Foo.methods.include?(:should_not_be_public)
+  end
+
+  def test_concerning_adds_class_methods
+    assert Foo.methods.include?(:should_be_public)
+  end
+
 end

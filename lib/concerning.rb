@@ -19,6 +19,10 @@ class Module
   #     before_create :track_creation
   #     after_destroy :track_deletion
   #
+  #     def self.next_by_event
+  #       # ...
+  #     end
+  #
   #     private
   #       def track_creation
   #         # ...
@@ -39,6 +43,12 @@ class Module
   #         has_many :events
   #         before_create :track_creation
   #         after_destroy :track_deletion
+  #       end
+  #
+  #       module ClassMethods
+  #         def next_by_event
+  #           # ...
+  #         end
   #       end
   #
   #       private
@@ -81,6 +91,12 @@ class Module
   #         after_destroy :track_deletion
   #       end
   #
+  #       class_methods do
+  #         def next_by_event
+  #           # ...
+  #         end
+  #       end
+  #
   #       private
   #         def track_creation
   #           # ...
@@ -100,6 +116,11 @@ class Module
     # Define a new concern and mix it in.
     def concerning(topic, &block)
       include concern(topic, &block)
+    end
+
+    # Add class methods via the concern.
+    def class_methods(&block)
+      const_set :ClassMethods, Module.new(&block)
     end
 
     # A low-cruft shortcut to define a concern.

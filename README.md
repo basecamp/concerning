@@ -30,6 +30,11 @@ class Todo
   before_create :track_creation
   after_destroy :track_deletion
 
+  def self.next_by_event
+    # ...
+  end
+
+
   private
     def track_creation
       # ...
@@ -53,6 +58,12 @@ class Todo
       has_many :events
       before_create :track_creation
       after_destroy :track_deletion
+    end
+
+    module ClassMethods
+      def next_by_event
+        # ...
+      end
     end
 
     private
@@ -95,6 +106,12 @@ separate bite-sized concerns.
         has_many :events
         before_create :track_creation
         after_destroy :track_deletion
+      end
+
+      class_methods do
+        def next_by_event
+          # ...
+        end
       end
 
       private

@@ -1,6 +1,7 @@
 ## Bite-sized separation of concerns
 
-(*Note!* Module#concerning is included in Rails 4.1!)
+(*Note!* Module#concerning is included in Rails 4.1. You can still use this
+library, but it will defer to Active Support's implementation if available.)
 
 We often find ourselves with a medium-sized chunk of behavior that we'd
 like to extract, but only mix in to a single class.

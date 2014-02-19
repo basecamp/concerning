@@ -55,5 +55,30 @@ class ConcerningTest < MiniTest::Unit::TestCase
   def test_concerning_adds_class_methods
     assert Foo.methods.include?(:should_be_public)
   end
+end
 
+# Put a fake Active Support implementation in the load path to verify that
+# we defer to it when we can.
+class ForwardCompatibilityWithRails41Test < MiniTest::Unit::TestCase
+  def setup;    expunge_loaded_features end
+  def teardown; expunge_loaded_features end
+
+  def test_check_for_active_support_implementation_before_providing_our_own
+    with_stubbed_active_support_in_load_path do
+      require 'concerning'
+    end
+    assert defined?(::CONCERNING_DEFERRED_TO_ACTIVE_SUPPORT)
+  end
+
+  private
+  def expunge_loaded_features
+    $LOADED_FEATURES.delete_if { |feature| feature =~ /concerning/ }
+  end
+
+  def with_stubbed_active_support_in_load_path
+    $LOAD_PATH.unshift File.expand_path('../active_support_stub', __FILE__)
+    yield
+  ensure
+    $LOAD_PATH.shift
+  end
 end

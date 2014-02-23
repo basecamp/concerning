@@ -1,29 +1,22 @@
 PATH
   remote: .
   specs:
-    concerning (1.0.2)
+    concerning (1.0.3)
       activesupport (>= 3.0.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.0.2)
-      i18n (~> 0.6, >= 0.6.4)
-      minitest (~> 4.2)
-      multi_json (~> 1.3)
-      thread_safe (~> 0.1)
-      tzinfo (~> 0.3.37)
-    atomic (1.1.14)
-    i18n (0.6.9)
-    minitest (4.5.0)
+    activesupport (3.2.13)
+      i18n (= 0.6.1)
+      multi_json (~> 1.0)
+    i18n (0.6.1)
+    minitest (5.2.3)
     multi_json (1.8.4)
-    thread_safe (0.1.3)
-      atomic
-    tzinfo (0.3.38)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   concerning!
-  minitest
+  minitest (~> 5.1)

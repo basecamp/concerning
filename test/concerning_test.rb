@@ -5,14 +5,14 @@ $VERBOSE = true
 
 require 'concerning'
 
-class ConcerningTest < MiniTest::Unit::TestCase
-  def test_concern_shortcut_creates_a_module_but_doesnt_include_it
-    mod = Module.new { concern(:Foo) { } }
-    assert_kind_of Module, mod::Foo
-    assert mod::Foo.respond_to?(:included)
-    assert !mod.ancestors.include?(mod::Foo), mod.ancestors.inspect
+class ConcerningTest < Minitest::Test
+  def test_concerning_declares_a_concern_and_includes_it_immediately
+    klass = Class.new { concerning(:Foo) { } }
+    assert klass.ancestors.include?(klass::Foo), klass.ancestors.inspect
   end
+end
 
+class ConcernTest < Minitest::Test
   def test_concern_creates_a_module_extended_with_active_support_concern
     klass = Class.new do
       concern :Foo do
@@ -22,7 +22,7 @@ class ConcerningTest < MiniTest::Unit::TestCase
     end
 
     # Declares a concern but doesn't include it
-    assert_kind_of Module, klass::Foo
+    assert_kind_of ActiveSupport::Concern, klass::Foo
     assert !klass.ancestors.include?(klass::Foo), klass.ancestors.inspect
 
     # Public method visibility by default
@@ -32,34 +32,50 @@ class ConcerningTest < MiniTest::Unit::TestCase
     assert_equal 1, Class.new { include klass::Foo }.instance_variable_get('@foo')
   end
 
-  def test_concerning_declares_a_concern_and_includes_it_immediately
-    klass = Class.new { concerning(:Foo) { } }
-    assert klass.ancestors.include?(klass::Foo), klass.ancestors.inspect
+  def test_may_be_defined_at_toplevel
+    mod = Kernel.concern(:Foo) { }
+    assert_equal mod, ::Foo
+    assert_kind_of ActiveSupport::Concern, ::Foo
+    assert !Object.ancestors.include?(::Foo), mod.ancestors.inspect
   end
 
   class Foo
     concerning :Bar do
       module ClassMethods
-        def should_not_be_public; end
+        def will_be_orphaned; end
       end
+
+      const_set :ClassMethods, Module.new {
+        def hacked_on; end
+      }
+
+      # Doesn't overwrite existing ClassMethods module.
       class_methods do
-        def should_be_public; end
+        def nicer_dsl; end
+      end
+
+      # Doesn't overwrite previous class_methods definitions.
+      class_methods do
+        def doesnt_clobber; end
       end
     end
   end
 
-  def test_concerning_does_not_add_a_class_method_if_module_defined_directly
-    assert !Foo.methods.include?(:should_not_be_public)
-  end
+  def test_using_class_methods_blocks_instead_of_ClassMethods_module
+    assert !Foo.respond_to?(:will_be_orphaned)
+    assert Foo.respond_to?(:hacked_on)
+    assert Foo.respond_to?(:nicer_dsl)
+    assert Foo.respond_to?(:doesnt_clobber)
 
-  def test_concerning_adds_class_methods
-    assert Foo.methods.include?(:should_be_public)
+    # Orphan in Foo::ClassMethods, not Bar::ClassMethods.
+    assert Foo.const_defined?(:ClassMethods)
+    assert Foo::ClassMethods.method_defined?(:will_be_orphaned)
   end
 end
 
 # Put a fake Active Support implementation in the load path to verify that
 # we defer to it when we can.
-class ForwardCompatibilityWithRails41Test < MiniTest::Unit::TestCase
+class ForwardCompatibilityWithRails41Test < Minitest::Test
   def setup;    expunge_loaded_features end
   def teardown; expunge_loaded_features end
 

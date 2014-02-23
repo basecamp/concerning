@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name      = 'concerning'
-  s.version   = '1.0.2'
+  s.version   = '1.0.3'
   s.author    = 'Jeremy Kemper'
   s.email     = 'jeremy@basecamp.com'
   s.homepage  = 'https://github.com/basecamp/concerning'
@@ -8,7 +8,9 @@ Gem::Specification.new do |s|
   s.license   = 'MIT'
 
   s.add_runtime_dependency 'activesupport', '>= 3.0.0'
-  s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest', '~> 5.1'
 
-  s.files = Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"]
+  root = File.dirname(__FILE__)
+  s.files = Dir["#{root}/lib/**/*.rb"]
+  s.test_files = Dir["#{root}/test/**/*.rb"]
 end

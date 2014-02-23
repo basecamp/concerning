@@ -8,5 +8,5 @@
 begin
   require 'active_support/core_ext/module/concerning'
 rescue LoadError
-  require 'concerning/module_extension'
+  require 'concerning/extension'
 end

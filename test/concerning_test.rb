@@ -15,28 +15,30 @@ end
 class ConcernTest < Minitest::Test
   def test_concern_creates_a_module_extended_with_active_support_concern
     klass = Class.new do
-      concern :Foo do
+      concern :Baz do
         included { @foo = 1 }
         def should_be_public; end
       end
     end
 
     # Declares a concern but doesn't include it
-    assert_kind_of ActiveSupport::Concern, klass::Foo
-    assert !klass.ancestors.include?(klass::Foo), klass.ancestors.inspect
+    assert klass.const_defined?(:Baz, false)
+    assert !ConcernTest.const_defined?(:Baz)
+    assert_kind_of ActiveSupport::Concern, klass::Baz
+    assert !klass.ancestors.include?(klass::Baz), klass.ancestors.inspect
 
     # Public method visibility by default
-    assert klass::Foo.public_instance_methods.map(&:to_s).include?('should_be_public')
+    assert klass::Baz.public_instance_methods.map(&:to_s).include?('should_be_public')
 
     # Calls included hook
-    assert_equal 1, Class.new { include klass::Foo }.instance_variable_get('@foo')
+    assert_equal 1, Class.new { include klass::Baz }.instance_variable_get('@foo')
   end
 
   def test_may_be_defined_at_toplevel
-    mod = ::TOPLEVEL_BINDING.eval 'concern(:Foo) { }'
-    assert_equal mod, ::Foo
-    assert_kind_of ActiveSupport::Concern, ::Foo
-    assert !Object.ancestors.include?(::Foo), mod.ancestors.inspect
+    mod = ::TOPLEVEL_BINDING.eval 'concern(:ToplevelConcern) { }'
+    assert_equal mod, ::ToplevelConcern
+    assert_kind_of ActiveSupport::Concern, ::ToplevelConcern
+    assert !Object.ancestors.include?(::ToplevelConcern), mod.ancestors.inspect
   end
 
   class Foo

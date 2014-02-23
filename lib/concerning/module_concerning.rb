@@ -115,41 +115,28 @@ class Module
   # * clean up junk drawer classes by encapsulating their concerns
   # * stop leaning on protected/private for "internal stuff" modularity
   module Concerning
+    # Define a new concern and mix it in.
     def concerning(topic, &block)
       include concern(topic, &block)
     end
+
+    # A low-cruft shortcut to define a concern.
+    #
+    #   concern :EventTracking do
+    #     ...
+    #   end
+    #
+    #   module EventTracking
+    #     extend ActiveSupport::Concern
+    #
+    #     ...
+    #   end
+    def concern(topic, &module_definition)
+      const_set topic, Module.new {
+        extend ActiveSupport::Concern
+        module_eval(&module_definition)
+      }
+    end
   end
   include Concerning # We do this mixin just for nice RDoc.
-end
-
-module Kernel
-  # A low-cruft shortcut to define a concern.
-  #
-  #   concern :EventTracking do
-  #     ...
-  #   end
-  #
-  #   module EventTracking
-  #     extend ActiveSupport::Concern
-  #
-  #     ...
-  #   end
-  def concern(topic, &module_definition)
-    const_set topic, Module.new {
-      extend ActiveSupport::Concern
-      module_eval(&module_definition)
-    }
-  end
-end
-
-# Provide a class_methods alternative to ClassMethods since defining
-# a constant within a block doesn't work as folks would expect.
-ActiveSupport::Concern.module_eval do
-  def class_methods(&class_methods_module_definition)
-    mod = const_defined?(:ClassMethods) ?
-      const_get(:ClassMethods) :
-      const_set(:ClassMethods, Module.new)
-
-    mod.module_eval(&class_methods_module_definition)
-  end unless method_defined? :class_methods
 end

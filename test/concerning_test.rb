@@ -33,7 +33,7 @@ class ConcernTest < Minitest::Test
   end
 
   def test_may_be_defined_at_toplevel
-    mod = Kernel.concern(:Foo) { }
+    mod = ::TOPLEVEL_BINDING.eval 'concern(:Foo) { }'
     assert_equal mod, ::Foo
     assert_kind_of ActiveSupport::Concern, ::Foo
     assert !Object.ancestors.include?(::Foo), mod.ancestors.inspect
@@ -83,7 +83,8 @@ class ForwardCompatibilityWithRails41Test < Minitest::Test
     with_stubbed_active_support_in_load_path do
       require 'concerning'
     end
-    assert defined?(::CONCERNING_DEFERRED_TO_ACTIVE_SUPPORT)
+    assert defined?(::MODULE_CONCERNING_DEFERRED_TO_ACTIVE_SUPPORT)
+    assert defined?(::KERNEL_CONCERN_DEFERRED_TO_ACTIVE_SUPPORT)
   end
 
   private

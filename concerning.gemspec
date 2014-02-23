@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name      = 'concerning'
-  s.version   = '1.0.3'
+  s.version   = '1.0.4'
   s.author    = 'Jeremy Kemper'
   s.email     = 'jeremy@basecamp.com'
   s.homepage  = 'https://github.com/basecamp/concerning'
